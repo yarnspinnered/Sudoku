@@ -7,6 +7,8 @@ package sudoku;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.concurrent.ThreadLocalRandom;
+
 
 /**
  *
@@ -42,7 +44,43 @@ public class Board {
         this.boardVals = boardVals;
     }
     
-    public void updateBoard(JTextField[][] textCells){
+    public static Board generateBoard(){
+        boolean valid = false;
+        Board result = new Board(new int[9][9]);
+        int attemptCounter = 0;
+        double p;
+        
+        while(!valid){
+            System.out.println("new attempt " + attemptCounter++);
+            int[][] newBoardVals = new int[9][9];
+            for(int i = 0; i < 9; i++){
+                for(int j = 0; j < 9; j++){
+                    p = ThreadLocalRandom.current().nextDouble(1);
+                    if(p<=0.20){
+                        newBoardVals[i][j] = 
+                                ThreadLocalRandom.current().nextInt(1, 10);
+                    }
+                }
+            }
+            result = new Board(newBoardVals);
+            valid = result.solveBoard(0);
+        }
+        
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                p = ThreadLocalRandom.current().nextDouble(1);
+                if(p<=0.65){
+                    result.boardVals[i][j] = 0;
+                    result.fixedVals[i][j] = false;
+                } else {
+                    result.fixedVals[i][j] = true;
+                }
+            }
+        }
+        
+        return result;
+    }
+    public void actualGUIToBoardUpdate(JTextField[][] textCells){
         for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++){
                 String txt = textCells[i][j].getText().trim();
@@ -98,11 +136,25 @@ public class Board {
     }
     
     
+    private static int[] getShuffledArrayOfOneToNine(){
+        int index, temp;
+        int[] arr = {1,2,3,4,5,6,7,8,9};
+        
+        for (int i = arr.length - 1; i > 0; i--){
+            index = ThreadLocalRandom.current().nextInt(i + 1);
+            temp = arr[index];
+            arr[index] = arr[i];
+            arr[i] = temp;
+        }
+        
+        return arr;
+    }
     
     public boolean solveBoard(int cellIndex){
         int row = cellIndex / 9;
         int col = cellIndex % 9;
         int originalVal = this.boardVals[row][col];
+        int[] answers = getShuffledArrayOfOneToNine();
         
 //        System.out.println(row + " " + col);
         if(this.fixedVals[row][col]){
@@ -114,7 +166,7 @@ public class Board {
         }
         
         if(cellIndex==80){
-            for(int i=1; i <= 9; i++){
+            for(int i: answers){
                 this.boardVals[row][col] = i;
                 if(this.checkBoard()){
                     return true;
@@ -125,7 +177,7 @@ public class Board {
         }
         
 
-        for(int i=1; i <= 9; i++){
+        for(int i: answers){
             this.boardVals[row][col] = i;
             if(this.checkBoard()){
                 boolean next = solveBoard(cellIndex + 1);
@@ -139,4 +191,18 @@ public class Board {
         this.boardVals[row][col] = originalVal;
         return false;
     }
+    
+    public void clearEntries(JTextField[][] textCells){
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                if(this.fixedVals[i][j]){
+                    ;
+                } else {
+                    textCells[i][j].setText("0");
+                    this.boardVals[i][j] = 0;
+                }
+            }
+        }
+    }
+    
 }
