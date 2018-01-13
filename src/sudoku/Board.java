@@ -79,15 +79,16 @@ public class Board {
             solving. If it takes more than a second to solve, the latch will
             time out and we proceed to a new seed.
 */
-            SudokuSolver solver = new SudokuSolver(candidateBoard, latch, solved);
+            SudokuSolver solver = new SudokuSolver(
+                    candidateBoard, latch, solved);
             
             try {
                 Thread t1 = new Thread(solver);
                 t1.start();
-                latch.await(1, TimeUnit.SECONDS);  // wait until latch counted down to 0
+                latch.await(1, TimeUnit.SECONDS);  
+                // wait until latch counted down to 0
                 
             } catch (InterruptedException e) {
-                ;
             }
             valid = solved[0];
         }
@@ -96,7 +97,7 @@ public class Board {
         for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++){
                 p = ThreadLocalRandom.current().nextDouble(1);
-                if(p<=0.65){
+                if(p<=0.6){
                     candidateBoard.boardVals[i][j] = 0;
                     candidateBoard.fixedVals[i][j] = false;
                 } else {
@@ -124,7 +125,6 @@ public class Board {
     public boolean isBoardFull(){
         for(int i=0; i<this.boardVals.length;i++){
             for(int j=0; j<this.boardVals.length;j++){
-                System.out.println(i + " " + j);
                 if (this.boardVals[i][j] == 0){
                     return false;
                 }
@@ -165,9 +165,7 @@ public class Board {
     public void clearEntries(JTextField[][] textCells){
         for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++){
-                if(this.fixedVals[i][j]){
-                    ;
-                } else {
+                if(!this.fixedVals[i][j]){
                     textCells[i][j].setText("0");
                     this.boardVals[i][j] = 0;
                 }

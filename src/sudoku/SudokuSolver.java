@@ -98,7 +98,6 @@ public class SudokuSolver implements Runnable{
     @Override
     public void run(){
         this.solved[0] = this.solveBoard(0);
-        System.out.println(this.solved[0]);
         this.latch.countDown();
     }
     

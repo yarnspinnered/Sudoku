@@ -35,9 +35,6 @@ public class GUI extends JFrame implements ActionListener {
     private final Button buttonGenerate;
     private final JTextField outputText;
     
-    public static final Color OPEN_CELL_COLOR = Color.GRAY;
-
-    
     GUI(Board mainBoard){
         /**
          *  This constructor takes in a board object and constructs the 
@@ -75,15 +72,21 @@ public class GUI extends JFrame implements ActionListener {
                 this.textCells[i][j] = new JTextField();
                 this.textCells[i][j].setText("" + this.actualBoardVals[i][j]);
                 this.textCells[i][j].setInputVerifier(this.verifier);
-                this.textCells[i][j].setPreferredSize(new Dimension(30, 30));
-                this.textCells[i][j].setFont(new Font("Default", Font.PLAIN, 20));
+                this.textCells[i][j].setPreferredSize(new Dimension(40, 40));
+                this.textCells[i][j].setFont(
+                        new Font("Default", Font.PLAIN, 25));
                 this.textCells[i][j].setHorizontalAlignment(JTextField.CENTER);
-                this.textCells[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK,1));
+                this.textCells[i][j].setBorder(
+                        BorderFactory.createLineBorder(Color.BLACK,1));
                 
                 if(this.fixedVals[i][j]){
                     this.textCells[i][j].setEditable(false);
+                    this.textCells[i][j].setBackground(Color.DARK_GRAY);
+                    this.textCells[i][j].setForeground(Color.RED);
                 } else {
                     this.textCells[i][j].setEditable(true);
+                    this.textCells[i][j].setBackground(Color.WHITE);
+                    this.textCells[i][j].setForeground(Color.BLACK);
                 }
                 
                 int miniPanelIdx = (i/3) * 3 + j/3;
@@ -93,7 +96,8 @@ public class GUI extends JFrame implements ActionListener {
         
         for(int i=0; i < 9; i++){
             this.topPanel.add(this.miniTopPanels[i]);
-            this.miniTopPanels[i].setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
+            this.miniTopPanels[i].setBorder(
+                    BorderFactory.createLineBorder(Color.BLACK,2));
         }
         
 //        This part lays out the middle panel for all the buttons.
@@ -101,19 +105,19 @@ public class GUI extends JFrame implements ActionListener {
         this.midPanel.setLayout(new GridLayout(2,2));
         this.midPanel.setSize(new Dimension(150, 60));
         
-        this.buttonCheck = new Button("Check");
+        this.buttonCheck = new Button("Submit attempt");
         this.buttonCheck.addActionListener(this);
         this.midPanel.add(buttonCheck);
         
-        this.buttonSolve = new Button("Solve");
+        this.buttonSolve = new Button("See answer");
         this.buttonSolve.addActionListener(this);
         this.midPanel.add(buttonSolve);
         
-        this.buttonClear = new Button("Clear");
+        this.buttonClear = new Button("Clear entries");
         this.buttonClear.addActionListener(this);
         this.midPanel.add(buttonClear);
         
-        this.buttonGenerate = new Button("Generate");
+        this.buttonGenerate = new Button("New board");
         this.buttonGenerate.addActionListener(this);
         this.midPanel.add(buttonGenerate);
         
@@ -121,7 +125,7 @@ public class GUI extends JFrame implements ActionListener {
         this.btmPanel = new JPanel();
         this.btmPanel.setLayout(new FlowLayout());
         this.outputText = new JTextField();
-        this.outputText.setPreferredSize(new Dimension(270, 30));
+        this.outputText.setPreferredSize(new Dimension(400, 30));
         this.outputText.setEditable(false);
         this.btmPanel.add(this.outputText);
         
@@ -132,8 +136,8 @@ public class GUI extends JFrame implements ActionListener {
         this.UIPanel.add(btmPanel);
         this.UIPanel.setLayout(new GridLayout(2,1));
         
-        this.doublePanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.topPanel, 
-                this.UIPanel);
+        this.doublePanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
+                this.topPanel, this.UIPanel);
         this.doublePanel.setDividerLocation(0.9);
 
         add(doublePanel);
@@ -181,14 +185,20 @@ public class GUI extends JFrame implements ActionListener {
                 int actualVal = this.actualBoardVals[i][j];
                 if(fullReset){
                     if(actualVal > 0){
-                        this.textCells[i][j].setText("" + this.actualBoardVals[i][j]);
+                        this.textCells[i][j].setText("" 
+                                + this.actualBoardVals[i][j]);
                         this.textCells[i][j].setEditable(false);
+                        this.textCells[i][j].setBackground(Color.DARK_GRAY);
+                        this.textCells[i][j].setForeground(Color.RED);
                     }else{
                         this.textCells[i][j].setText("0");
                         this.textCells[i][j].setEditable(true);
+                        this.textCells[i][j].setBackground(Color.WHITE);
+                        this.textCells[i][j].setForeground(Color.BLACK);
                     } 
                 } else {
-                    this.textCells[i][j].setText("" + this.actualBoardVals[i][j]);
+                    this.textCells[i][j].setText("" 
+                            + this.actualBoardVals[i][j]);
                 }
             }
         }
@@ -201,9 +211,10 @@ public class GUI extends JFrame implements ActionListener {
             if (!mainBoard.isBoardFull()){
                 this.outputText.setText("Board is not yet full!");
             } else if (!mainBoard.checkBoard()){
-                this.outputText.setText("This solution is wrong");
+                this.outputText.setText("This solution is wrong.");
             } else {
-                this.outputText.setText("You have solved the puzzle!");
+                this.outputText.setText(
+                        "Congratulations! You have solved the puzzle!");
             }
         }
         
@@ -214,7 +225,9 @@ public class GUI extends JFrame implements ActionListener {
             if(solved){
                 this.outputText.setText("Here's the solved puzzle!");
             } else {
-                this.outputText.setText("Puzzle cannot be solved from current state.");
+                this.outputText.setText(
+                        "Currently unsolvable. "
+                                + "Change entered values or clear everything first!");
             }
         }
         
