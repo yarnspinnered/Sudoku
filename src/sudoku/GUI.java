@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 /** * 
  *
@@ -19,7 +20,7 @@ public class GUI extends JFrame implements ActionListener {
     private boolean[][] fixedVals;
     private int[][] actualBoardVals;
     
-    private final JSplitPane DoublePane;
+    private final JSplitPane doublePanel;
     private final JPanel topPanel;
     private final JPanel[] miniTopPanels = new JPanel[9];
     private final JPanel midPanel;
@@ -38,18 +39,32 @@ public class GUI extends JFrame implements ActionListener {
 
     
     GUI(Board mainBoard){
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        /**
+         *  This constructor takes in a board object and constructs the 
+         * corresponding GUI for the board.
+         * 
+         * @param mainBoard The board to be represented
+         */
+        
         this.mainBoard = mainBoard;
         this.fixedVals = mainBoard.getFixedVals();
+        this.actualBoardVals = this.mainBoard.getBoardVals();
+        
         this.setName("Sudoku");
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setTitle("Sudoku");
         
         this.textCells = new JTextField[9][9];
-        this.actualBoardVals = this.mainBoard.getBoardVals();
         this.verifier = new MyVerifier();
         
+/*      Top panel. Is a 3x3 Gridlayout with each cell containing a smaller 
+        3x3 gridlayout panel, corresponding to the 9 smaller grids in a 
+        Sudoku grid. The smaller grids each contain 9 text fields where
+        input is verified.
+*/
         this.topPanel = new JPanel();
         this.topPanel.setLayout(new GridLayout(3,3));
-//        this.topPanel.setSize(new Dimension(120*18, 120 * 18));
+
         for(int i=0; i < 9; i++){
             this.miniTopPanels[i] = new JPanel();
             this.miniTopPanels[i].setLayout(new GridLayout(3,3));
@@ -81,6 +96,7 @@ public class GUI extends JFrame implements ActionListener {
             this.miniTopPanels[i].setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
         }
         
+//        This part lays out the middle panel for all the buttons.
         this.midPanel = new JPanel();
         this.midPanel.setLayout(new GridLayout(2,2));
         this.midPanel.setSize(new Dimension(150, 60));
@@ -101,28 +117,29 @@ public class GUI extends JFrame implements ActionListener {
         this.buttonGenerate.addActionListener(this);
         this.midPanel.add(buttonGenerate);
         
+//        This part lays out the bottom panel for the status text
         this.btmPanel = new JPanel();
         this.btmPanel.setLayout(new FlowLayout());
-//        this.btmPanel.setSize(new Dimension(150,30));
         this.outputText = new JTextField();
         this.outputText.setPreferredSize(new Dimension(270, 30));
         this.outputText.setEditable(false);
         this.btmPanel.add(this.outputText);
-                
+        
+//        We group the buttons and the status text together so we can do a 
+//        vertical split of the sudoku board above and UI elements below
         this.UIPanel = new JPanel();
         this.UIPanel.add(midPanel);
         this.UIPanel.add(btmPanel);
         this.UIPanel.setLayout(new GridLayout(2,1));
         
-        this.DoublePane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.topPanel, 
+        this.doublePanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.topPanel, 
                 this.UIPanel);
-        this.DoublePane.setDividerLocation(0.9);
+        this.doublePanel.setDividerLocation(0.9);
 
-        add(DoublePane);
+        add(doublePanel);
         setVisible(true);
         pack();
         
-        this.setTitle("Sudoku");
     }
     
    class MyVerifier extends InputVerifier{
@@ -131,30 +148,38 @@ public class GUI extends JFrame implements ActionListener {
        
        @Override
        public boolean verify(JComponent input) {
+           /*
+           We trim zeroes from the left and right of the entered input. If it
+           becomes an empty string, we replace it with zero. Otherwise, we check
+           if the remaining string is a digit from 0 to 9. If it is, we leave
+           it as its trimmed version. If its not a digit from this list, we 
+           replace it with 0.
+           */
             JTextField textCell = (JTextField) input;
             String enteredText = textCell.getText();
             if(!enteredText.equals("0")){
                 enteredText = enteredText.replaceFirst("^0+(?!$)", "");
                 enteredText = enteredText.replaceAll("0+$", "");
             }
-            if(enteredText == ""){ enteredText = "0";}
+            
+            if(enteredText.equals("")){ enteredText = "0";}
+            
             if(permittedStrings.contains(enteredText)){
                 textCell.setText(enteredText);
                 return true;
             } else {
                 textCell.setText("0");
-                
                 return false;
             }
         }
    } 
-    
+   
+//   Used to update the GUI based on the underlying board state
    public void actualBoardToGUIUpdate(boolean fullReset){
        for(int i=0; i < 9; i++){
             for(int j=0; j < 9; j++){
                 int actualVal = this.actualBoardVals[i][j];
                 if(fullReset){
-                
                     if(actualVal > 0){
                         this.textCells[i][j].setText("" + this.actualBoardVals[i][j]);
                         this.textCells[i][j].setEditable(false);
@@ -200,7 +225,7 @@ public class GUI extends JFrame implements ActionListener {
         
         if (evt.getSource() == this.buttonGenerate){
             this.outputText.setText("Generating...");
-            this.mainBoard = Board.generateBoard();
+            this.mainBoard = Board.generateBoard(); // Generates a new object
             this.actualBoardVals = this.mainBoard.getBoardVals();
             this.fixedVals = this.mainBoard.getFixedVals();
             actualBoardToGUIUpdate(true);
