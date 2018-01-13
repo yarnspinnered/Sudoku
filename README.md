@@ -10,5 +10,5 @@ Features:
 
 ## Screenshots
 
-<a href="url"><img src="https://github.com/yarnspinnered/Sudoku/blob/master/img/InitialState.JPG?raw=true" align="left" width="400" ></a>
-<a href="url"><img src="https://github.com/yarnspinnered/Sudoku/blob/master/img/Solved.JPG" align="left" width="400" ></a>
+<a href="url"><img src="https://github.com/yarnspinnered/Sudoku/blob/master/img/InitialState.JPG?raw=true" align="left" width="300" ></a>
+<a href="url"><img src="https://github.com/yarnspinnered/Sudoku/blob/master/img/Solved.JPG" align="left" width="300" ></a>
