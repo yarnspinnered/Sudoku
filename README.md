@@ -9,6 +9,7 @@ Features:
 * Generate new boards after one board is solved
 
 ## Screenshots
-
-<a href="url"><img src="https://github.com/yarnspinnered/Sudoku/blob/master/img/InitialState.JPG?raw=true" align="left" width="300" ></a>
-<a href="url"><img src="https://github.com/yarnspinnered/Sudoku/blob/master/img/Solved.JPG" align="left" width="300" ></a>
+<p>
+<a href="url"><img src="https://github.com/yarnspinnered/Sudoku/blob/master/img/InitialState.PNG" align="left" width="300" ></a>
+</p>
+<a href="url"><img src="https://github.com/yarnspinnered/Sudoku/blob/master/img/Solved.PNG" align="left" width="300" ></a>
